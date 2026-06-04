@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Score Cekih by Sadewa Corp</title>
+    <meta name="description" content="Aplikasi PWA Premium Pencatat Skor Permainan">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="classic-192.png">
+    <link rel="apple-touch-icon" href="classic-192.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen active">
+        <div class="loading-content">
+            <img src="classic-512.png" alt="Logo Score Cekih" class="logo-loading floating glow pulse">
+            <h2 class="app-title-loading">Score Cekih</h2>
+            <p class="corp-name">by Sadewa Corp</p>
+            <div class="loading-bar-container">
+                <div id="loadingBar" class="loading-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="appContainer" class="app-container fade-hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <img src="classic-192.png" alt="Logo" class="logo-header">
+                <h1 class="app-title">Score Cekih</h1>
+            </div>
+            <div class="header-right">
+                <button id="themeToggleBtn" class="icon-btn" title="Ganti Tema">☀️</button>
+                <button id="fullscreenBtn" class="icon-btn" title="Layar Penuh">⛶</button>
+                <button id="screenshotBtn" class="icon-btn" title="Ambil Gambar">📸</button>
+            </div>
+        </header>
+
+        <!-- Setup Game -->
+        <section id="setupSection" class="section setup-section">
+            <div class="card premium-card">
+                <h2 class="section-title">Pengaturan Permainan</h2>
+                
+                <div class="form-group">
+                    <label>Nama Pemain A</label>
+                    <input type="text" id="playerAInput" class="form-input" value="Pemain A" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>Nama Pemain B</label>
+                    <input type="text" id="playerBInput" class="form-input" value="Pemain B" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>Nama Pemain C</label>
+                    <input type="text" id="playerCInput" class="form-input" value="Pemain C" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>Nama Pemain D</label>
+                    <input type="text" id="playerDInput" class="form-input" value="Pemain D" maxlength="20">
+                </div>
+
+                <div class="form-group">
+                    <label>Target Kemenangan</label>
+                    <select id="targetScoreSelect" class="form-select">
+                        <option value="500">500</option>
+                        <option value="750">750</option>
+                        <option value="1000" selected>1000</option>
+                        <option value="1500">1500</option>
+                        <option value="custom">Angka Lain</option>
+                    </select>
+                    <input type="number" id="customTargetInput" class="form-input custom-target hidden" placeholder="Masukkan angka" min="100" max="10000">
+                </div>
+
+                <button id="startGameBtn" class="btn btn-primary btn-full">MULAI PERMAINAN</button>
+            </div>
+        </section>
+
+        <!-- Game Section -->
+        <section id="gameSection" class="section game-section hidden">
+            <div class="game-info-bar">
+                <div class="info-item">RONDE <span id="roundNumber">1</span></div>
+                <div class="info-item">PUTERAN <span id="turnNumber">1</span></div>
+                <div class="info-item">TARGET <span id="targetScoreDisplay">1000</span></div>
+                <button id="editNamesBtn" class="btn btn-sm btn-outline">✏️ Edit Nama</button>
+            </div>
+
+            <!-- Players Cards -->
+            <div id="playersContainer" class="players-grid"></div>
+
+            <!-- Input Score -->
+            <div class="card premium-card score-input-card">
+                <h3 class="card-title">Masukkan Skor Puteran Ini</h3>
+                <div id="scoreInputsContainer" class="score-inputs-grid"></div>
+                <div class="btn-group mt-3">
+                    <button id="undoBtn" class="btn btn-secondary">↩ UNDO</button>
+                    <button id="saveTurnBtn" class="btn btn-primary btn-flex">SIMPAN PUTERAN</button>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="tabs-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="ranking">Ranking</button>
+                    <button class="tab-btn" data-tab="history">History</button>
+                    <button class="tab-btn" data-tab="achievements">Pencapaian</button>
+                    <button class="tab-btn" data-tab="stats">Statistik</button>
+                    <button class="tab-btn" data-tab="archive">Arsip</button>
+                </div>
+
+                <div class="tab-content active" id="tab-ranking">
+                    <div id="rankingContent" class="tab-body"></div>
+                </div>
+                <div class="tab-content" id="tab-history">
+                    <div id="historyContent" class="tab-body"></div>
+                </div>
+                <div class="tab-content" id="tab-achievements">
+                    <div id="achievementsContent" class="tab-body"></div>
+                </div>
+                <div class="tab-content" id="tab-stats">
+                    <div id="statsContent" class="tab-body"></div>
+                </div>
+                <div class="tab-content" id="tab-archive">
+                    <div id="archiveContent" class="tab-body"></div>
+                </div>
+            </div>
+
+            <button id="resetGameBtn" class="btn btn-danger btn-full mt-4">🗑 RESET PERMAINAN</button>
+        </section>
+    </div>
+
+    <!-- Popups -->
+    <div id="overlay" class="overlay hidden"></div>
+
+    <div id="editNamesPopup" class="popup hidden">
+        <div class="popup-content">
+            <h3>Ubah Nama Pemain</h3>
+            <div id="editNamesInputs"></div>
+            <div class="btn-group mt-3">
+                <button id="cancelEditNamesBtn" class="btn btn-secondary">Batal</button>
+                <button id="saveEditNamesBtn" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="burnerSelectPopup" class="popup hidden">
+        <div class="popup-content">
+            <h3 id="burnerQuestion"></h3>
+            <div id="burnerOptionsContainer" class="btn-column mt-3"></div>
+            <button id="cancelBurnerBtn" class="btn btn-secondary btn-full mt-3">Batal</button>
+        </div>
+    </div>
+
+    <div id="confirmResetPopup" class="popup hidden">
+        <div class="popup-content">
+            <h3>Konfirmasi Reset</h3>
+            <p>Reset seluruh permainan?<br>Statistik dan arsip tidak akan terhapus.</p>
+            <div class="btn-group mt-3">
+                <button id="cancelResetBtn" class="btn btn-secondary">Batal</button>
+                <button id="confirmResetBtn" class="btn btn-danger">Ya, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="soundGodOfGambler" src="godofgambler.wav" preload="auto">
+    <audio id="soundStartFromZero" src="dimulaidari0.wav" preload="auto">
+
+    <!-- Animations -->
+    <canvas id="fireCanvas" class="fire-canvas hidden"></canvas>
+    <canvas id="starsCanvas" class="stars-canvas hidden"></canvas>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+</html>
